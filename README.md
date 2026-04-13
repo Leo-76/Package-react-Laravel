@@ -1,43 +1,47 @@
 # Laravel React Auth
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/your-vendor/laravel-react-auth.svg?style=flat-square)](https://packagist.org/packages/your-vendor/laravel-react-auth)
-[![Total Downloads](https://img.shields.io/packagist/dt/your-vendor/laravel-react-auth.svg?style=flat-square)](https://packagist.org/packages/your-vendor/laravel-react-auth)
-[![License](https://img.shields.io/github/license/your-vendor/laravel-react-auth?style=flat-square)](LICENSE)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/leo76/laravel-react-auth.svg?style=flat-square)](https://packagist.org/packages/leo76/laravel-react-auth)
+[![Total Downloads](https://img.shields.io/packagist/dt/leo76/laravel-react-auth.svg?style=flat-square)](https://packagist.org/packages/leo76/laravel-react-auth)
+[![PHP Version](https://img.shields.io/packagist/php-v/leo76/laravel-react-auth?style=flat-square)](https://packagist.org/packages/leo76/laravel-react-auth)
+[![License](https://img.shields.io/github/license/leo76/laravel-react-auth?style=flat-square)](LICENSE)
 
-A **Laravel package** that drops in a complete React + Inertia.js authentication system — login, register, and a protected dashboard — ready to install and customise.
-
----
-
-## Features
-
--  Login page with remember-me
--  Register page with validation
--  Protected dashboard (Inertia.js)
-- Session-based auth (no tokens needed)
-- One-command install: `php artisan react-auth:install`
--  Fully publishable views, config, and migrations
-- Tailwind CSS + React 18
-- Toggle registration on/off via config
+> A Laravel package that drops in a complete **React + Inertia.js** authentication system in minutes — login, register, and a protected dashboard, all ready to customise.
 
 ---
 
-## Requirements
+##  Features
+
+| | |
+|---|---|
+| | Login with email, password & remember-me |
+| | Register with validation & password confirmation |
+| | Protected dashboard page |
+| | Logout with session invalidation |
+| | One-command install: `php artisan react-auth:install` |
+| | Tailwind CSS + React 18 + Inertia.js |
+| | Fully publishable views, config & migrations |
+| | Toggle registration on/off via config |
+| | Full PHPUnit feature test suite included |
+
+---
+
+## 📋 Requirements
 
 | Dependency | Version |
 |---|---|
-| PHP | ^8.1 |
-| Laravel | ^10 or ^11 |
-| Node.js | ^18 |
-| inertiajs/inertia-laravel | ^1.0 |
+| PHP | `^8.1` |
+| Laravel | `^10.0` or `^11.0` |
+| Node.js | `^18` |
+| inertiajs/inertia-laravel | `^1.0` |
 
 ---
 
-## Installation
+##  Installation
 
 ### 1 — Install via Composer
 
 ```bash
-composer require your-vendor/laravel-react-auth
+composer require leo76/laravel-react-auth
 ```
 
 ### 2 — Run the install command
@@ -46,7 +50,7 @@ composer require your-vendor/laravel-react-auth
 php artisan react-auth:install
 ```
 
-This publishes the config, React pages, and migrations.
+This publishes the **config**, **React pages**, and **migrations** into your project.
 
 ### 3 — Run migrations
 
@@ -61,12 +65,11 @@ npm install
 npm run dev
 ```
 
-### 5 — Configure Inertia
+### 5 — Configure Inertia middleware
 
-Make sure your app uses the Inertia middleware. In `bootstrap/app.php` (Laravel 11) or `app/Http/Kernel.php` (Laravel 10):
+**Laravel 11** — `bootstrap/app.php` :
 
 ```php
-// Laravel 11 — bootstrap/app.php
 ->withMiddleware(function (Middleware $middleware) {
     $middleware->web(append: [
         \Inertia\Middleware::class,
@@ -74,24 +77,35 @@ Make sure your app uses the Inertia middleware. In `bootstrap/app.php` (Laravel 
 })
 ```
 
-Set the root Blade view in `config/inertia.php`:
+**Laravel 10** — `app/Http/Kernel.php` :
 
 ```php
-'root_view' => 'app', // resources/views/app.blade.php
+protected $middlewareGroups = [
+    'web' => [
+        // ...
+        \Inertia\Middleware::class,
+    ],
+];
+```
+
+Set the root Blade view in `config/inertia.php` :
+
+```php
+'root_view' => 'app',
 ```
 
 ---
 
-## Usage
+##  Available Routes
 
-Once installed, three routes are available:
-
-| Route | URL | Name |
-|---|---|---|
-| Login | `/auth/login` | `react-auth.login` |
-| Register | `/auth/register` | `react-auth.register` |
-| Dashboard | `/auth/dashboard` | `react-auth.dashboard` |
-| Logout | `POST /auth/logout` | `react-auth.logout` |
+| Method | URL | Route name | Access |
+|---|---|---|---|
+| `GET` | `/auth/login` | `react-auth.login` | Guest |
+| `POST` | `/auth/login` | `react-auth.login.post` | Guest |
+| `GET` | `/auth/register` | `react-auth.register` | Guest |
+| `POST` | `/auth/register` | `react-auth.register.post` | Guest |
+| `GET` | `/auth/dashboard` | `react-auth.dashboard` | Auth |
+| `POST` | `/auth/logout` | `react-auth.logout` | Auth |
 
 Visit `/auth/login` in your browser to get started.
 
@@ -105,14 +119,23 @@ Publish the config file:
 php artisan vendor:publish --tag=react-auth-config
 ```
 
-`config/react-auth.php`:
+`config/react-auth.php` :
 
 ```php
 return [
-    'route_prefix'       => 'auth',            // URL prefix for all routes
-    'user_model'         => \App\Models\User::class,
-    'allow_registration' => true,              // set false to disable /register
-    'middleware'         => ['web'],
+
+    // URL prefix for all routes → /auth/login, /auth/register ...
+    'route_prefix' => env('REACT_AUTH_PREFIX', 'auth'),
+
+    // Eloquent model used for authentication
+    'user_model' => \App\Models\User::class,
+
+    // Set to false to disable the /register page and endpoint
+    'allow_registration' => env('REACT_AUTH_REGISTRATION', true),
+
+    // Middleware applied to all package routes
+    'middleware' => ['web'],
+
 ];
 ```
 
@@ -120,13 +143,11 @@ return [
 
 ## Customising the React pages
 
-Publish the React components to your project:
-
 ```bash
 php artisan vendor:publish --tag=react-auth-assets
 ```
 
-Pages are copied to `resources/js/vendor/react-auth/pages/Auth/`:
+Files are copied to :
 
 ```
 resources/js/vendor/react-auth/
@@ -139,32 +160,81 @@ resources/js/vendor/react-auth/
     └── InputField.jsx
 ```
 
-Edit freely — the package will not overwrite them after publishing.
+Edit freely — the package will **never overwrite** published files.
 
 ---
 
-## Testing
+##  Publish individually
+
+```bash
+php artisan vendor:publish --tag=react-auth-config       # Config only
+php artisan vendor:publish --tag=react-auth-assets        # React pages + CSS
+php artisan vendor:publish --tag=react-auth-migrations    # Migrations only
+```
+
+---
+
+##  Testing
 
 ```bash
 composer test
 ```
 
-The test suite covers login, register, logout, dashboard access, and validation.
+The test suite covers login, register, logout, dashboard access, validation, and the registration toggle.
 
 ---
 
-## Changelog
+##  Package Structure
 
-See [CHANGELOG.md](CHANGELOG.md).
+```
+laravel-react-auth/
+├── composer.json
+├── config/react-auth.php
+├── routes/auth.php
+├── src/
+│   ├── LaravelReactAuthServiceProvider.php
+│   ├── Console/InstallCommand.php
+│   ├── Http/
+│   │   ├── Controllers/AuthController.php
+│   │   └── Middleware/RedirectIfAuthenticated.php
+│   └── database/migrations/
+├── resources/
+│   ├── views/app.blade.php
+│   ├── css/app.css
+│   └── js/
+│       ├── app.jsx
+│       ├── components/InputField.jsx
+│       └── pages/Auth/
+│           ├── Login.jsx
+│           ├── Register.jsx
+│           └── Dashboard.jsx
+└── tests/Feature/AuthTest.php
+```
 
 ---
 
-## Contributing
+##  Changelog
 
-Pull requests are welcome. For major changes, please open an issue first.
+See [CHANGELOG.md](CHANGELOG.md) for recent changes.
 
 ---
 
-## License
+## 🤝 Contributing
 
-[MIT](LICENSE)
+Pull requests are welcome! For major changes, please open an issue first.
+
+1. Fork the repository
+2. Create your branch: `git checkout -b feature/my-feature`
+3. Commit: `git commit -m 'feat: add my feature'`
+4. Push: `git push origin feature/my-feature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+The MIT License (MIT). See [LICENSE](LICENSE) for more information.
+
+---
+
+Made with ❤️ for the Laravel community
