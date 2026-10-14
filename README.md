@@ -219,7 +219,7 @@ See [CHANGELOG.md](CHANGELOG.md) for recent changes.
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Pull requests are welcome! For major changes, please open an issue first.
 
