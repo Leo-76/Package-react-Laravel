@@ -231,7 +231,7 @@ Pull requests are welcome! For major changes, please open an issue first.
 
 ---
 
-## 📄 License
+## License
 
 The MIT License (MIT). See [LICENSE](LICENSE) for more information.
 
