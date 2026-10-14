@@ -25,7 +25,7 @@
 
 ---
 
-## 📋 Requirements
+##  Requirements
 
 | Dependency | Version |
 |---|---|
