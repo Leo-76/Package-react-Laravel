@@ -1,5 +1,5 @@
 {
-    "name": "leo76/laravel-react-auth",
+    "name": "leo-76/package-react-laravel",
     "description": "A Laravel package providing a full React SPA authentication system with login, register, and dashboard.",
     "keywords": ["laravel", "react", "authentication", "spa", "inertia"],
     "homepage": "https://github.com/your-vendor/laravel-react-auth",
